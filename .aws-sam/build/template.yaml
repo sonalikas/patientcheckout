@@ -1,0 +1,56 @@
+AWSTemplateFormatVersion: '2010-09-09'
+Transform: AWS::Serverless-2016-10-31
+Description: 'patientcheckout
+
+  Sample SAM Template for patientcheckout
+
+  '
+Globals:
+  Function:
+    Timeout: 20
+    Runtime: java11
+    MemorySize: 512
+Resources:
+  PatientCheckoutBucket:
+    Type: AWS::S3::Bucket
+    Properties:
+      BucketName:
+        Fn::Sub: ${AWS::StackName}-${AWS::AccountId}-${AWS::Region}
+  patientcheckoutTopic:
+    Type: AWS::SNS::Topic
+  PatientCheckoutFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      CodeUri: PatientCheckoutFunction
+      Handler: com.sonalika.aws.lambda.s3sns.PatientCheckoutLambda::handler
+      Policies:
+      - S3ReadPolicy:
+          BucketName:
+            Fn::Sub: ${AWS::StackName}-${AWS::AccountId}-${AWS::Region}
+      - SNSPublishMessagePolicy:
+          TopicName:
+            Fn::GetAtt:
+            - patientcheckoutTopic
+            - TopicName
+      Environment:
+        Variables:
+          PATIENT_CHECKOUT_TOPIC:
+            Ref: patientcheckoutTopic
+      Events:
+        S3Event:
+          Type: S3
+          Properties:
+            Bucket:
+              Ref: PatientCheckoutBucket
+            Events: s3:ObjectCreated:*
+  BillManagementFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      CodeUri: BillManagementFunction
+      Handler: com.sonalika.aws.lambda.s3sns.BillManagementLambda::handler
+      Events:
+        SNSEvent:
+          Type: SNS
+          Properties:
+            Topic:
+              Ref: patientcheckoutTopic
