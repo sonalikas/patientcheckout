@@ -6,6 +6,6 @@ codeuri = "E:\\AWS lamda project\\patientcheckout\\patientcheckout"
 runtime = "java11"
 source_md5 = ""
 packagetype = "Zip"
-functions = ["PatientCheckoutFunction", "BillManagementFunction"]
+functions = ["PatientCheckoutFunction", "BillManagementFunction", "ErrorHandlingFunction"]
 
 [layer_build_definitions]

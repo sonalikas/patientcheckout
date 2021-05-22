@@ -17,7 +17,11 @@ public class PatientCheckoutEvent {
 		this.lastName = lastName;
 		this.ssn = ssn;
 	}
-
+	@Override
+	public String toString() {
+		return "PatientCheckoutEvent [firstName=" + firstName + ", middleName=" + middleName + ", lastName=" + lastName
+				+ ", ssn=" + ssn + "]";
+	}
 	
 
 }
